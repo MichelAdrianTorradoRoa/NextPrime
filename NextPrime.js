@@ -1,6 +1,26 @@
-const cargarPeliculas = async ()=>{
+let pagina = 1;
+const btnAnterior = document.getElementById('btnAnterior');
+const btnSiguiente = document.getElementById('btnSiguiente');
+
+btnSiguiente.addEventListener('click', () => {
+	if(pagina < 1000){
+		pagina += 1;
+		cargarPeliculas();
+	}
+});
+
+btnAnterior.addEventListener('click', () => {
+	if(pagina > 1){
+		pagina -= 1;
+		cargarPeliculas();
+	}
+});
+
+
+const cargarPeliculas = async()=>{
     try{
-        const respuesta = await fetch('https://api.themoviedb.org/3/movie/500?api_key=659660db867e718b14bae3d7f6b8679f');
+        const respuesta = await fetch(`https://api.themoviedb.org/3/movie/popular?api_key=659660db867e718b14bae3d7f6b8679f&language=es-MX&page=${pagina}`);
+        console.log(respuesta)
         // Verificamos si la respuesta es exitosa (código de estado HTTP en el rango 200-299)
         if (!respuesta.ok) {
             // Si la respuesta no es exitosa, lanzamos un error con un mensaje descriptivo
