@@ -16,24 +16,40 @@ btnAnterior.addEventListener('click', () => {
 	}
 });
 
+const cargarPeliculas = async() => {
+	try {
+		const respuesta = await fetch(`https://api.themoviedb.org/3/movie/popular?api_key=659660db867e718b14bae3d7f6b8679f&language=es-MX&page=${pagina}`);
+	
+		console.log(respuesta);
 
-const cargarPeliculas = async()=>{
-    try{
-        const respuesta = await fetch(`https://api.themoviedb.org/3/movie/popular?api_key=659660db867e718b14bae3d7f6b8679f&language=es-MX&page=${pagina}`);
-        console.log(respuesta)
-        // Verificamos si la respuesta es exitosa (código de estado HTTP en el rango 200-299)
-        if (!respuesta.ok) {
-            // Si la respuesta no es exitosa, lanzamos un error con un mensaje descriptivo
-            throw new Error('Network response was not ok' +respuesta.statusText);
-        }
-        // Convertimos la respuesta a formato JSON
-        const datos = await respuesta.json();
-        // Imprimimos los datos en la consola para ver la información de la película console.log(datos);
-        console.log(datos)
-    
-    } catch (error) {
+		// Si la respuesta es correcta
+		if(respuesta.status === 200){
+			const datos = await respuesta.json();
+			
+			let peliculas = '';
+			datos.results.forEach(pelicula => {
+				peliculas += `
+					<div class="pelicula">
+						<img class="poster" src="https://image.tmdb.org/t/p/w500/${pelicula.poster_path}">
+						<h3 class="titulo">${pelicula.title}</h3>
+					</div>
+				`;
+			});
 
-        console.error('Hubo un problema con la solicitud Fetch;', error);
-    }
+			document.getElementById('contenedor').innerHTML = peliculas;
+
+		} else if(respuesta.status === 401){
+			console.log('Pusiste la llave mal');
+		} else if(respuesta.status === 404){
+			console.log('La pelicula que buscas no existe');
+		} else {
+			console.log('Hubo un error y no sabemos que paso');
+		}
+
+	} catch(error){
+		console.log(error);
+	}
+
 }
-    cargarPeliculas()
+
+cargarPeliculas();
